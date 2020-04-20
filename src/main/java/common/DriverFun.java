@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -15,7 +14,11 @@ import org.openqa.selenium.io.FileHandler;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.aventstack.extentreports.Status;
+import TestCases.BaseTestcase;
+
 public class DriverFun {
+
 	private WebDriver driver=null;
 
 	public DriverFun(WebDriver driver) {
@@ -28,6 +31,8 @@ public class DriverFun {
 		ele.sendKeys(value);
 		}catch (Exception e) {
 			System.out.println(e.getMessage());
+			BaseTestcase.test.log(Status.ERROR, "in exception block  "+e.getMessage());
+
 		}
 	}
 	
@@ -36,11 +41,13 @@ public class DriverFun {
 			ele.click();
 		}catch (Exception e) {
 			System.out.println(e.getMessage());
+			BaseTestcase.test.log(Status.ERROR, "in exception block  "+e.getMessage());
+
 		}
 	}
 	
 	public void waitTime(WebElement ele) {
-		WebDriverWait wait = new WebDriverWait(driver, 40);
+		WebDriverWait wait = new WebDriverWait(driver, 70);
 		wait.until(ExpectedConditions.visibilityOf(ele));	
 	}
 	
@@ -56,11 +63,13 @@ public class DriverFun {
 	   try
 	    {
 	    	FileHandler.copy(src, new File(sspath));
-	    	System.out.println("ScreenShot TAKEN!");
+	    	System.out.println("ScreenShot taken!");
 
 	    	
 	    }catch(IOException e) {
 	    	System.out.println("Unable to SS!! "+e.getMessage());
+			BaseTestcase.test.log(Status.ERROR, "in exception block  "+e.getMessage());
+
 	}
 	   return sspath;
 }
@@ -74,6 +83,8 @@ public class DriverFun {
 		 return dateFormat.format(date);
 		
 	}
+	
+	
 	
 	
 	

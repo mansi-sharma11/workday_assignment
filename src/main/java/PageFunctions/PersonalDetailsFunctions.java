@@ -1,56 +1,45 @@
 package PageFunctions;
 
-
 import org.openqa.selenium.WebDriver;
+import org.testng.SkipException;
 
 import ObjectRepositort.PersonalDetailsOR;
 import TestCases.BaseTestcase;
 import common.DriverFun;
-import junit.framework.Assert;
 
-public class PersonalDetailsFunctions extends PersonalDetailsOR{
+public class PersonalDetailsFunctions extends PersonalDetailsOR {
 
-	WebDriver driver=null;
-    DriverFun driverFunc;
-    BaseTestcase btc;
-	public PersonalDetailsFunctions(WebDriver driver) {
+	WebDriver driver = null;
+	DriverFun driverFunc;
+	BaseTestcase btc;
+
+	public PersonalDetailsFunctions(WebDriver driver) throws InterruptedException {
 		super(driver);
 		this.driver = driver;
 		driverFunc = BaseTestcase.getDriverFun();
-		// TODO Auto-generated constructor stub
-	}
-	
-	  	public void Details(String text) throws InterruptedException {
-		Thread.sleep(30000);
-        //2 extras here
-        if(link1.isDisplayed()) {
-        	 driverFunc.click(link1);
-             driverFunc.waitTime(revise);	
-             driverFunc.click(revise);
-             Thread.sleep(2000);
-             System.out.println("Name is "+header.getText());
-             Assert.assertTrue(isTitleMatched());
-      		System.out.println("Aseert executed");
-             Thread.sleep(20000);
-             driverFunc.scroll(textarea);
-     		 driverFunc.enterValues(textarea, text);
-     		driverFunc.click(save);
-        }
-	}
-	  /*	public void EnterComment(String text) throws InterruptedException {
-	   * driverFunc.scroll(textarea);
-     		 driverFunc.enterValues(textarea, text);
-     		// driverFunc.click(save);
-	  		
-	  	}
-*/
-		public boolean isTitleMatched() {
-			
-			if(TitleName.getText().equalsIgnoreCase("Mansi Sharma")) {
-			 return true;
-			}
-			else {
-			return false;
-			}
+		Thread.sleep(10000);
+		if (!driver.getTitle().equalsIgnoreCase("Change My Personal Information - Workday")) {
+			throw new SkipException("this is not personal details page");
 		}
+	}
+
+	public void openPersonalDetails(String text) throws InterruptedException {
+		if (link1.isDisplayed()) {
+			driverFunc.click(link1);
+			driverFunc.waitTime(revise);
+			driverFunc.click(revise);
+			Thread.sleep(2000);
+			System.out.println("Name is " + header.getText());
+			Thread.sleep(20000);
+			driverFunc.scroll(textarea);
+			driverFunc.enterValues(textarea, text);
+			// driverFunc.click(save);
+		} else {
+			System.out.println("Name is " + header.getText());
+			Thread.sleep(20000);
+			driverFunc.scroll(textarea);
+			driverFunc.enterValues(textarea, text);
+			// driverFunc.click(save);
+		}
+	}
 }

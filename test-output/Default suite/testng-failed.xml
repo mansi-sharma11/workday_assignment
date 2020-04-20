@@ -3,16 +3,19 @@
 <suite guice-stage="DEVELOPMENT" name="Failed suite [Default suite]">
   <test name="Default test(failed)">
     <classes>
-      <class name="TestCases.PersonalDetailsTest">
+      <class name="TestCases.WDayTests">
         <methods>
+          <include name="verifyLoginFunctionality"/>
+          <include name="enterComment"/>
           <include name="beforeTest"/>
           <include name="beforesuite"/>
           <include name="afterTest"/>
           <include name="aftermethod"/>
-          <include name="Login"/>
-          <include name="VerifyDetailsandComment"/>
+          <include name="clickTabs"/>
+          <include name="beforMethod"/>
+          <include name="verifyUser"/>
         </methods>
-      </class> <!-- TestCases.PersonalDetailsTest -->
+      </class> <!-- TestCases.WDayTests -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

@@ -2,31 +2,37 @@ package TestCases;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import org.testng.ITestResult;
 import org.testng.Reporter;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
+import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 
 import PageFunctions.LoginPageFunctions;
 import PageFunctions.PersonalDetailsFunctions;
-import PageFunctions.PersonalInfoFunctions;
+import PageFunctions.ProfilePageFunctions;
 import common.ConfigManager;
 import common.Driver;
 import common.DriverFun;
 
 public class BaseTestcase {
-	Driver s;
+	public static Driver s;
 	static DriverFun driverFun;
 	public ExtentReports report;
-	public ExtentTest logger;
+	public ExtentTest classtest;
+	public static ExtentTest test;
+
+	
 	public static DriverFun getDriverFun() {
 		return driverFun;
 	}
@@ -36,8 +42,8 @@ public class BaseTestcase {
 	}
 
 	protected LoginPageFunctions loginPage;
-	protected PersonalInfoFunctions Pinfo;	
-	protected PersonalDetailsFunctions Pdetails;
+	protected ProfilePageFunctions profilePage;
+	protected PersonalDetailsFunctions Personaldetails;
 
 	@BeforeSuite
 	public void beforesuite() {
@@ -46,9 +52,6 @@ public class BaseTestcase {
 		report = new ExtentReports();
 		report.attachReporter(extent);
 		Reporter.log("settings done", true);
-
-
-
 
 	}
 	@BeforeTest
@@ -67,26 +70,33 @@ public class BaseTestcase {
 		s.getDriver();
 		driverFun = new DriverFun(s.getDriver());
 		setDriverFun(driverFun);
-		
 		loginPage = new LoginPageFunctions(s.getDriver());
-
-		
+	
+		classtest = report.createTest(getClass().getName());
+		classtest.log(Status.INFO, "inside the before test method");
 	}
 	
+	@BeforeMethod
+	public void beforMethod(Method method) {
+		test=classtest.createNode(method.getName());
+	}
 	
 	@AfterMethod
 	public void aftermethod(ITestResult result) throws IOException {
 		String pa = DriverFun.captureScreenshot(s.getDriver());
 		if(result.getStatus()==ITestResult.SUCCESS) {		
-			logger.pass("Passed!!",MediaEntityBuilder.createScreenCaptureFromPath(pa).build());
-			logger.info("Info");
+			classtest.pass("Passed!!",MediaEntityBuilder.createScreenCaptureFromPath(pa).build());
+			classtest.info("Info");
 		}
-		else if(result.getStatus()==ITestResult.FAILURE) {			
-			logger.fail(result.getThrowable().getMessage(),MediaEntityBuilder.createScreenCaptureFromPath(pa).build());
+		else if(result.getStatus()==ITestResult.FAILURE) {	
+			test.log(Status.FAIL, result.getMethod().getMethodName()+"has failed");
+			classtest.fail(result.getThrowable().getMessage(),MediaEntityBuilder.createScreenCaptureFromPath(pa).build());
 
 		}
-		else if(result.getStatus()==ITestResult.SKIP) {			
-		logger.skip("Skipped!!",MediaEntityBuilder.createScreenCaptureFromPath(pa).build());
+		else if(result.getStatus()==ITestResult.SKIP) {	
+			test.log(Status.SKIP, result.getMethod().getMethodName()+"has skipped ");
+			//classtest.skip(result.getThrowable().getMessage(),MediaEntityBuilder.createScreenCaptureFromPath(pa).build());
+			classtest.skip("Skipped!!",MediaEntityBuilder.createScreenCaptureFromPath(pa).build());
 		}
 		report.flush();
 		Reporter.log("Report generated with screenshot", true);
@@ -95,7 +105,7 @@ public class BaseTestcase {
 	
 	
 	@AfterTest
-	public void afterTest() {
+	public static void afterTest() {
 		s.getDriver().quit();
 
 	}
